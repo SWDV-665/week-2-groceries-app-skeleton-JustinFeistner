@@ -5,14 +5,22 @@
 </ion-header>
 
 <ion-content padding>
+  <h3 class="no-item" text-center *ngIf="loadItems().length === 0">
+    No items available in list!
+  </h3>
 <!--Create sliding list-->  
   <ion-list>
-      <ion-item-sliding *ngFor="let item of items; let i = index"> <!--'i' is the index of the item in the removeItem() function-->
+      <ion-item-sliding *ngFor="let item of loadItems(); let i = index"> <!--'i' is the index of the item in the removeItem() function-->
         <ion-item>
           <h2>{{item.name}}</h2>
           <p>{{item.quantity}}</p>
         </ion-item>
         <ion-item-options>
+          <button (click)="editItem(item, i)" ion-button color="primary" icon-start>
+            <ion-icon name="create"></ion-icon>
+            Edit
+          </button>
+
           <button (click)="removeItem(item, i)" ion-button color="secondary" icon-start>
             <ion-icon name="trash"></ion-icon>
             Done
@@ -21,7 +29,7 @@
       </ion-item-sliding>
            
   </ion-list>
-<!--Create FAB (floating action button)-->
+<!--Create FAB (floating action button). This is the little plus icon in the bottom right-->
   <ion-fab bottom right> 
     <button (click)="addItem()" ion-fab mini><ion-icon name="add"></ion-icon></button>
   </ion-fab> 

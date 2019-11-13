@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { ToastController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
+import { GroceriesServiceProvider } from '../../providers/groceries-service/groceries-service';
+import { InputDialogServiceProvider } from '../../providers/input-dialog-service/input-dialog-service';
 
 
 @Component({
@@ -10,78 +12,40 @@ import { AlertController } from 'ionic-angular';
 })
 export class HomePage {
 
-  title = "Grocery";
+  title = "Grocery List";
 
-  items = [
-    {
-      name: "Milk",
-      quantity: 2    
-    },
-    {
-      name: "Bread",
-      quantity: 1    
-    },
-    {
-      name: "Banana",
-      quantity: 3    
-    },
-    {
-      name: "Sugar",
-      quantity: 1    
-    },
-  ];
+  constructor(public navCtrl: NavController, public toastCtrl: ToastController, public alertCtrl: AlertController, public dataService: GroceriesServiceProvider, public InputDialogService: InputDialogServiceProvider) {
 
-  constructor(public navCtrl: NavController, public toastCtrl: ToastController, public alertCtrl: AlertController) {
+  }
 
+  loadItems() {
+    return this.dataService.getItems();
   }
 
   removeItem(item, index) {
     console.log("Removing Item - ", item, index);
     const toast = this.toastCtrl.create({
-      message: 'Removing Item: ' + item.name,
+      message: 'Removing Item: ' + item.name + ' at index: ' + String(index),
       duration: 3000
     });
     toast.present();
 
-    this.items.splice(index, 1) //This is what deletes the item (index) from the list. 
+    this.dataService.removeItem(index)
   }
 
   addItem() {
     console.log("Adding Item");
-    this.showAddItemPrompt();
+    this.InputDialogService.showPrompt();
   }
-
-  showAddItemPrompt() {
-    const prompt = this.alertCtrl.create({
-      title: 'Add Item',
-      message: "Please enter item...",
-      inputs: [
-        {
-          name: 'name',
-          placeholder: 'Name'
-        },
-        {
-          name: 'quantity',
-          placeholder: 'Quantity'
-        },
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          handler: data => {
-            console.log('Cancel clicked');
-          }
-        },
-        {
-          text: 'Save',
-          handler: item => {
-            console.log('Saved clicked', item);
-            this.items.push(item);
-          }
-        }
-      ]
+  
+  editItem(item, index) {
+    console.log("Edit Item - ", item, index);
+    const toast = this.toastCtrl.create({ /*toast creates a floating message bar*/
+      message: 'Editing Item: ' + item.name + ' at index: ' + String(index),
+      duration: 3000
     });
-    prompt.present();
+    toast.present();
+    this.InputDialogService.showPrompt(item, index)
   }
 
 }
