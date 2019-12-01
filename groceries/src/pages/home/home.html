@@ -1,42 +1,37 @@
+
 <ion-header>
   <ion-navbar>
-    <ion-title>{{title}}</ion-title>
+    <ion-title>{{ title }}</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  <h3 class="no-item" text-center *ngIf="loadItems().length === 0">
-    No items available in list!
-  </h3>
-<!--Create sliding list-->  
-  <ion-list>
-      <ion-item-sliding *ngFor="let item of loadItems(); let i = index"> <!--'i' is the index of the item in the removeItem() function-->
-        <ion-item>
-          <h2>{{item.name}}</h2>
-          <p>{{item.quantity}}</p>
-        </ion-item>
-        <ion-item-options>
-          <button (click)="editItem(item, i)" ion-button color="primary" icon-start>
-            <ion-icon name="create"></ion-icon>
-            Edit
-          </button>
-
-          <button (click)="shareItem(item, i)" ion-button color="light" icon-start>
-            <ion-icon name="share"></ion-icon>
-            Share
-          </button>
-
-          <button (click)="removeItem(item, i)" ion-button color="secondary" icon-start>
-            <ion-icon name="trash"></ion-icon>
-            Delete
-          </button>
-        </ion-item-options>
-      </ion-item-sliding>
-           
-  </ion-list>
-<!--Create FAB (floating action button). This is the little plus icon in the bottom right-->
-  <ion-fab bottom right> 
-    <button (click)="addItem()" ion-fab mini><ion-icon name="add"></ion-icon></button>
-  </ion-fab> 
-       
+    <h3 class="no-item" text-center *ngIf="items.length === 0">
+        No item available on the list!
+    </h3>
+    <ion-list>
+        <ion-item-sliding *ngFor="let item of items; let i = index">
+            <ion-item>
+                <h2>{{item.name}}</h2>
+                <p>{{item.quantity}}</p>
+            </ion-item>
+            <ion-item-options>
+                <button ion-button color="primary" icon-start (click)="editItem(item,i)">
+                <ion-icon name="create"></ion-icon>
+                Edit
+                </button>
+                <button ion-button color="light" icon-start (click)="shareItem(item,i)">
+                    <ion-icon name="share"></ion-icon>
+                    Share
+                </button>
+                <button ion-button color="secondary" icon-start (click)="removeItem(item)">
+                <ion-icon name="trash"></ion-icon>
+                Done
+                </button>
+            </ion-item-options>
+        </ion-item-sliding>
+    </ion-list>
+    <ion-fab bottom right>
+        <button ion-fab mini (click)="addItem()"><ion-icon name="add"></ion-icon></button>
+    </ion-fab>
 </ion-content>

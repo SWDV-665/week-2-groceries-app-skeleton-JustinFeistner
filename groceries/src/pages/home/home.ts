@@ -11,61 +11,65 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
   templateUrl: 'home.html'
 })
 export class HomePage {
+  title = "Grocery";
+  items = [];
+  errorMessage: string;
 
-  title = "Grocery List";
-
-  constructor(public navCtrl: NavController, public toastCtrl: ToastController, public alertCtrl: AlertController, public dataService: GroceriesServiceProvider, public InputDialogService: InputDialogServiceProvider, public socialSharing: SocialSharing) {
-
+  constructor(public navCtrl: NavController, public toastCtrl: ToastController, public alertCtrl: AlertController, public dataService: GroceriesServiceProvider, public inputDialogService : InputDialogServiceProvider, public socialSharing: SocialSharing) {
+    dataService.dataChanged$.subscribe((dataChanged:boolean) => {
+      this.loadItems();
+    });
   }
 
-  loadItems() {
-    return this.dataService.getItems();
+  ionViewDidLoad() {
+    this.loadItems();
   }
 
-  removeItem(item, index) {
-    console.log("Removing Item - ", item, index);
+  loadItems(){
+    this.dataService.getItems()
+    .subscribe(
+      items => this.items = items,
+      error => this.errorMessage = <any>error
+    );
+  }
+
+  editItem(item, index){
     const toast = this.toastCtrl.create({
-      message: 'Removing Item: ' + item.name + ' at index: ' + String(index),
-      duration: 3000
+      message : "Editing Item - "+item.name+" ...",
+      duration : 3000
     });
     toast.present();
-
-    this.dataService.removeItem(index)
+    this.inputDialogService.openModal(item,index);
   }
 
-  shareItem(item, index) {
-    console.log("Sharing Item - ", item, index);
+  shareItem(item, index){
     const toast = this.toastCtrl.create({
-      message: 'Sharing Item: ' + item.name + ' at index: ' + String(index),
-      duration: 3000
+      message : "Sharing Item - "+item.name+" ...",
+      duration : 3000
     });
     toast.present();
-
-    let message = "Grocery Item - Name: " + item.name + " - Quantity: " + item.quantity;
-    let subject = "Shared via Groceries app";
-
-    this.socialSharing.share(message, subject).then(() => {
-      // Sharing was successful
-      console.log("Shared Successfully!")
+    let message = "Grocery Item - Name : " + item.name + " - Quantity: " + item.quantity;
+    let subject = "Shared via Groceries App";
+    this.socialSharing.share(message,subject).then(() => {
+      console.log("Share successfully!");
     }).catch((error) => {
-      // Sharing errored out!
-      console.error("Error while sharing ", error)
+      console.log("Error while sharing",error);
     });
   }
 
-  addItem() {
-    console.log("Adding Item");
-    this.InputDialogService.showPrompt();
-  }
-  
-  editItem(item, index) {
-    console.log("Edit Item - ", item, index);
-    const toast = this.toastCtrl.create({ /*toast creates a floating message bar*/
-      message: 'Editing Item: ' + item.name + ' at index: ' + String(index),
-      duration: 3000
+
+
+  removeItem(item, index){
+    const toast = this.toastCtrl.create({
+      message : "Removing Item - "+item.name+" ...",
+      duration : 3000
     });
     toast.present();
-    this.InputDialogService.showPrompt(item, index)
+    this.dataService.removeItem(item);
+  }
+
+  addItem(){
+    this.inputDialogService.openModal();
   }
 
 }
